@@ -1,3 +1,8 @@
+/**
+ * @fileOverview This file is where we house the queue class
+ * @author Joshua D Phillips
+ * @version 1.0.0
+ */
 const { now, id } = require('./util/helpers')
 
 class Queue {
