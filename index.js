@@ -5,8 +5,7 @@ class Queue {
         // Check for values
         if (!mongoose) throw new Error('mongooseQ: provide a mongoose client')
         if (!name) throw new Error('mongooseQ: provide a queue name')
-        // Create the model for the message
-        this.Model = mongoose.model(name, new mongoose.Schema({
+        const modelSchema = new mongoose.Schema({
             ack: String,
             visible: { // Unix timestamp representing current visibility
                 type: Number,
@@ -28,7 +27,12 @@ class Queue {
             }
         }, {
             timestamps: true
-        }))
+        })
+        // Index at schema level
+        modelSchema.index({ done: 1, visible: 1 })
+        modelSchema.index({ ack: 1 }, { unique: true, sparse: true })
+        // Create the model for the message
+        this.Model = mongoose.model(name, modelSchema)
         // Handle the options passed through
         this.visibility = opts.visibility || 30
         this.delay = opts.delay || 0
@@ -39,7 +43,7 @@ class Queue {
         }
     }
     /**
-     * This function inserts messages into the queue
+     * Inserts messages
      *
      * @param {any} payload - Anything you'd like to store
      * @param {object} opts - Queue options
@@ -47,7 +51,7 @@ class Queue {
      *
      * @example
      *
-     *     add('Hello World!', {  })
+     *     await add('Hello World!', { delay: 120 })
      */
     async add(payload, opts = {}) {
         const delay = opts.delay || this.delay
@@ -66,15 +70,13 @@ class Queue {
         return res.map(r => r._id)
     }
     /**
-     * This function inserts messages into the queue
+     * Fetches messages
      *
-     * @param {any} payload - Anything you'd like to store
-     * @param {object} opts - Queue options
-     * @return {any} New message ID string or a list of strings
+     * @return {object} Single message
      *
      * @example
      *
-     *     add('Hello World!', {  })
+     *     await get()
      */
     async get(opts = {}) {
         const visibility = opts.visibility || this.visibility
@@ -122,9 +124,19 @@ class Queue {
         }
         return msg
     }
-
+    /**
+     * Add's more time to work with messages
+     *
+     * @param {string} ack - Message ack you'd like to ping
+     * @param {object} opts - Queue options
+     * @return {string} Ping'd message id
+     *
+     * @example
+     *
+     *     await ping('630d7f6535b2f89114daa238', { visibility: 120 })
+     */
     async ping(ack, opts = {}) {
-        const visibility = opts.visibility || Queue.visibility
+        const visibility = opts.visibility || this.visibility
         const where = {
             ack,
             visible: { $gt: now() }, // Greater than
@@ -135,11 +147,20 @@ class Queue {
                 visible: now() + visibility
             }
         }
-        const res = await Queue.model.findOneAndUpdate(where, update, { returnOriginal: false })
+        const res = await this.Model.findOneAndUpdate(where, update, { returnOriginal: false })
         if (!res) throw new Error('Queue.ping(): Unidentified ack  : ' + ack)
         return '' + res._id
     }
-
+    /**
+     * Mark's a message as done
+     *
+     * @param {string} ack - Message ack you'd like to complete
+     * @return {string} Ack'd message id
+     *
+     * @example
+     *
+     *     await ack('630d7f6535b2f89114daa238')
+     */
     async ack(ack) {
         const where = {
             ack,
@@ -151,46 +172,79 @@ class Queue {
                 done: true
             }
         }
-        const res = await Queue.model.findOneAndUpdate(where, update, { returnOriginal: false })
+        const res = await this.Model.findOneAndUpdate(where, update, { returnOriginal: false })
         if (!res) throw new Error('Queue.ack(): Unidentified ack : ' + ack)
         return '' + res._id
     }
-
-    async index() {
-        const index = await Queue.model.index({ deleted: 1, visible: 1 })
-        await Queue.model.createIndex({ ack: 1 }, { unique: true, sparse: true })
-        return index
-    }
-
+    /**
+     * Removes all messages marked done
+     *
+     * @return {object} Deletion result
+     *
+     * @example
+     *
+     *     clean()
+     */
     async clean() {
-        return Queue.model.deleteMany({ done: true })
+        return this.Model.deleteMany({ done: true })
     }
-
+    /**
+     * Counts total messages
+     *
+     * @return {number} Count of all messages
+     *
+     * @example
+     *
+     *     await total()
+     */
     async total() {
-        return Queue.model.countDocuments()
+        return this.Model.countDocuments()
     }
-
+    /**
+     * Counts total incomplete messages
+     *
+     * @return {number} Size of the queue
+     *
+     * @example
+     *
+     *     await size()
+     */
     async size() {
         const where = {
             done: false,
             visible: { $lte: now() },
         }
-        return Queue.model.countDocuments(where)
+        return this.Model.countDocuments(where)
     }
-
+    /**
+     * Counts total messages in progress
+     *
+     * @return {number} Total messages being worked on
+     *
+     * @example
+     *
+     *     await inFlight()
+     */
     async inFlight() {
         const where = {
             ack: { $exists: true },
             visible: { $gt: now() },
             done: false
         }
-        return Queue.model.countDocuments(where)
+        return this.Model.countDocuments(where)
     }
-
+    /**
+     * Counts total messages marked done
+     *
+     * @return {number} Total messages completed
+     *
+     * @example
+     *
+     *     await done()
+     */
     async done() {
-        return Queue.model.countDocuments({ done: true })
+        return this.Model.countDocuments({ done: true })
     }
 }
 
 module.exports = Queue
-
