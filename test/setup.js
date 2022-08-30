@@ -1,7 +1,7 @@
 const mongoose = require('mongoose')
 // Connection strings
 const url = 'mongodb://localhost:27017/'
-const dbName = 'mongoosejsQTest'
+const dbName = 'mongooQTest'
 
 module.exports = async function () {
 	const db = await mongoose.connect(url + dbName)
