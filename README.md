@@ -413,6 +413,7 @@ anything but are included as approximations at any point in time.
 This project is licensed under the [MIT License](../../LICENSE.md)
 
 ## Acknowledgments
+
   - Thank you to Andrew Chilton for inspiring this package, and allowing us to borrow some parts of npm/mongodb-queue
   - Big thanks to all that contributed, insperational or otherwise
 

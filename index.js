@@ -1,23 +1,32 @@
 /**
+ * 
  * @fileOverview This file is where we house the queue class
  * @author Joshua D Phillips
- * @version 1.0.0
+ * 
  */
 const { now, id } = require('./util/helpers')
 
+/** Class representing a queue */
 class Queue {
-    constructor(mongoose, name, opts = {}) {
-        // Check for values
-        if (!mongoose) throw new Error('mongooseQ: provide a mongoose client')
+    /**
+     * Create a queue
+     * @param {object} db - Mongoose client
+     * @param {number} name - Message collection name
+     * @param {object} [opts] - Options for queue setup
+     */
+    constructor(db, name, opts = {}) {
+        // Confirm we have a database client and a name
+        if (!db) throw new Error('mongooseQ: provide a mongoose client')
         if (!name) throw new Error('mongooseQ: provide a queue name')
-        const modelSchema = new mongoose.Schema({
+        // Message Model
+        const schemaModel = new db.Schema({
             ack: String,
             visible: { // Unix timestamp representing current visibility
                 type: Number,
                 required: true
             },
             payload: {
-                type: mongoose.Schema.Types.Mixed,
+                type: db.Schema.Types.Mixed,
                 required: true
             },
             done: { // Unix timestamp representing completion time
@@ -34,10 +43,10 @@ class Queue {
             timestamps: true
         })
         // Index at schema level
-        modelSchema.index({ done: 1, visible: 1 })
-        modelSchema.index({ ack: 1 }, { unique: true, sparse: true })
-        // Create the model for the message
-        this.Model = mongoose.model(name, modelSchema)
+        schemaModel.index({ done: 1, visible: 1 })
+        schemaModel.index({ ack: 1 }, { unique: true, sparse: true })
+        // Instantiate the message model
+        this.Model = db.model(name, schemaModel)
         // Handle the options passed through
         this.visibility = opts.visibility || 30
         this.delay = opts.delay || 0
