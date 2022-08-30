@@ -391,7 +391,7 @@ anything but are included as approximations at any point in time.
 ```
    ╒════════════════════════════════════════════════════╕
    │                                                    │
-   │   Joshua Phillips (Personal)                       │
+   │   Joshua D Phillips (Personal)                       │
    │   -------------------------                        │
    │                                                    │
    │          Email : phillips@joshuadarron.com         │
