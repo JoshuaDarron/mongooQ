@@ -1,0 +1,15 @@
+{
+  "name": "mongooseq",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Joshua D Phillips",
+  "license": "ISC",
+  "dependencies": {
+    "mocha": "^10.0.0",
+    "mongoose": "^6.5.3"
+  }
+}
