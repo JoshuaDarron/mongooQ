@@ -1,15 +1,34 @@
 {
 	"name": "mongoosejsq",
-	"version": "1.0.0",
-	"description": "A queue for mongoDB and mongoose.js",
+	"version": "0.0.0",
+	"description": "A light weight queue to use with mongoose.js",
 	"main": "index.js",
 	"scripts": {
 		"test": "mocha"
 	},
-	"author": "Joshua D Phillips",
-	"license": "MIT",
-	"dependencies": {
+	"dependencies": {},
+	"devDependencies": {
 		"mocha": "^10.0.0",
 		"mongoose": "^6.5.3"
-	}
+	},
+	"homepage": "https://github.com/JoshuaDarron/mongoosejsQ",
+	"author": "Joshua D Phillips",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/JoshuaDarron/mongoosejsQ.git"
+	},
+	"bugs": {
+		"url": "https://github.com/JoshuaDarron/mongoosejsQ/issues",
+		"mail": "phillips@joshuadarron.com"
+	},
+	"keywords": [
+		"mongodb",
+		"mongoose.js",
+		"mongoosejs",
+		"mongoose",
+		"queue",
+		"que",
+		"q"
+	]
 }
