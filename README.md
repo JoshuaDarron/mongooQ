@@ -1,6 +1,6 @@
-# mongoosejsQ #
+# mongooQ #
 
-[![NPM](https://nodei.co/npm/mongoosejsQ.png?mini=true)](https://nodei.co/npm/mongoosejsq/)
+[![NPM](https://nodei.co/npm/mongooq.png?mini=true)](https://nodei.co/npm/mongooq/)
 
 A really light-weight way to create queues with a nice API if you're already
 using Mongoose.js.
@@ -15,13 +15,13 @@ Create a connection to your MongoDB database with Mongoose.js, and use it to cre
 
 ```js
 const mongoose = require('mongoose')
-const mongoosejsQ = require('mongoosejsQ')
+const mongooQ = require('mongooq')
 
 const url = 'mongodb://localhost:27017/'
-const dbName = 'mongoosejsQ'
+const dbName = 'mongooQ'
 
-const client = await mongoose.connect(url + dbName)
-const queue = new mongoosejsQ(client, 'default', { visibility: 86400 })
+const db = await mongoose.connect(url + dbName)
+const queue = new mongooQ(db, 'default', { visibility: 86400 })
 ```
 
 Add a message to a queue:
@@ -70,17 +70,17 @@ const { deletedCount } = await queue.clean()
 
 ## Creating a Queue ##
 
-To create a queue, call the exported function with the `MongoClient`, the name
+To create a queue, call the exported function with the `MongooseClient`, the name
 and a set of opts. The MongoDB collection used is the same name as the name
 passed in:
 
 ```js
-const mongoosejsQ = require('mongoosejsq')
+const mongooQ = require('mongooq')
 
 // an instance of a queue
-const queue1 = await mongoosejsQ(db, 'a-queue')
+const queue1 = await mongooQ(db, 'a-queue')
 // another queue which uses the same collection as above
-const queue2 = await mongoosejsQ(db, 'a-queue')
+const queue2 = await mongooQ(db, 'a-queue')
 ```
 
 Using `queue1` and `queue2` here won't interfere with each other and will play along nicely, but that's not
@@ -92,7 +92,7 @@ it's not something you should do.
 To pass in options for the queue:
 
 ```js
-const resizeQueue = await mongoosejsQ(db, 'resize-queue', { visibility : 30, delay : 15 })
+const resizeQueue = await mongooQ(db, 'resize-queue', { visibility : 30, delay : 15 })
 ```
 
 This example shows a queue with a message visibility of 30s and a delay to each message of 15s.
@@ -107,8 +107,8 @@ Each queue you create will be it's own collection.
 e.g.
 
 ```js
-const resizeImageQueue = await mongoosejsQ(db, 'resize-image-queue')
-const notifyOwnerQueue = await mongoosejsQ(db, 'notify-owner-queue')
+const resizeImageQueue = await mongooQ(db, 'resize-image-queue')
+const notifyOwnerQueue = await mongooQ(db, 'notify-owner-queue')
 ```
 
 This will create two collections in MongoDB called `resize-image-queue` and `notify-owner-queue`.
@@ -125,7 +125,7 @@ You may set this visibility window on a per queue basis. For example, to set the
 visibility to 15 seconds:
 
 ```js
-const queue = await mongoosejsQ(db, 'queue', { visibility : 15 })
+const queue = await mongooQ(db, 'queue', { visibility : 15 })
 ```
 
 All messages in this queue now have a visibility window of 15s, instead of the
@@ -143,7 +143,7 @@ retrieval 10s after being added.
 To delay all messages by 10 seconds, try this:
 
 ```js
-const queue = await mongoosejsQ(db, 'queue', { delay : 10 })
+const queue = await mongooQ(db, 'queue', { delay : 10 })
 ```
 
 This is now the default for every message added to the queue.
@@ -158,8 +158,8 @@ automatically see problem messages.
 Pass in a queue (that you created) onto which these messages will be pushed:
 
 ```js
-const deadQueue = await mongoosejsQ(db, 'dead-queue')
-const queue = await mongoosejsQ(db, 'queue', { deadQueue : deadQueue })
+const deadQueue = await mongooQ(db, 'dead-queue')
+const queue = await mongooQ(db, 'queue', { deadQueue : deadQueue })
 ```
 
 If you pop a message off the `queue` over `maxRetries` times and still have not acked it,

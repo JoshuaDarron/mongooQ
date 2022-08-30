@@ -1,5 +1,5 @@
 const assert = require('assert')
-const mongooseQ = require('../')
+const mongooQ = require('../')
 // Test environment setup
 const setup = require('./setup.js')
 // Helpers
@@ -11,7 +11,7 @@ describe('Full walk through', async function () {
 
     before(async function () {
         client = await setup()
-        queue = new mongooseQ(client, 'default', { visibility: 86400 })
+        queue = new mongooQ(client, 'default', { visibility: 86400 })
     })
 
     after(function () {

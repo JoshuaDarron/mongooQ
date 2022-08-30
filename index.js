@@ -5,8 +5,9 @@
  * 
  */
 const { now, id } = require('./util/helpers')
-
-/** Class representing a queue */
+/** 
+ * Class representing a queue
+ */
 class Queue {
     /**
      * Create a queue
@@ -260,5 +261,8 @@ class Queue {
         return this.Model.countDocuments({ done: true })
     }
 }
-
+/**
+ * A module for creating and working with a mongoose queue
+ * @module Queue
+ */
 module.exports = Queue
