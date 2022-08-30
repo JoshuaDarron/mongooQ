@@ -77,7 +77,7 @@ describe('Full walk through', async function () {
             // Clean Queue
             ;[err, res] = await callout(queue.clean())
             assert.equal(err, null, 'Error is null')
-            assert.equal(res.deletedCount, 1, 'Theres only one message')
+            assert.equal(res.deletedCount, 1, 'Deleted one document')
             // Get queue total
             ;[err, res] = await callout(queue.total())
             assert.equal(err, null, 'Error is null')

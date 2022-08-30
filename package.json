@@ -1,5 +1,5 @@
 {
-	"name": "mongooseq",
+	"name": "mongoosejsq",
 	"version": "1.0.0",
 	"description": "A queue for mongoDB and mongoose.js",
 	"main": "index.js",
@@ -7,7 +7,7 @@
 		"test": "mocha"
 	},
 	"author": "Joshua D Phillips",
-	"license": "ISC",
+	"license": "MIT",
 	"dependencies": {
 		"mocha": "^10.0.0",
 		"mongoose": "^6.5.3"
