@@ -79,12 +79,11 @@ const mongooQ = require('mongooq')
 
 // an instance of a queue
 const queue1 = await mongooQ(db, 'a-queue')
-// another queue which uses the same collection as above
-const queue2 = await mongooQ(db, 'a-queue')
+// another queue which uses a different collection than above
+const queue2 = await mongooQ(db, 'b-queue')
 ```
 
-Using `queue1` and `queue2` here won't interfere with each other and will play along nicely, but that's not
-a good idea code-wise - just use the same object. This example is for illustrative purposes only.
+Using `queue1` and `queue2` here won't interfere with each other because they are seperate collections and will be handled accordingly.
 
 Note: Don't use the same queue name twice with different options, otherwise behaviour is undefined and again
 it's not something you should do.
@@ -158,8 +157,8 @@ automatically see problem messages.
 Pass in a queue (that you created) onto which these messages will be pushed:
 
 ```js
-const deadQueue = await mongooQ(db, 'dead-queue')
-const queue = await mongooQ(db, 'queue', { deadQueue : deadQueue })
+const deadQueue = await mongooQ(db, 'deadQueue')
+const queue = await mongooQ(db, 'queue', { deadQueue })
 ```
 
 If you pop a message off the `queue` over `maxRetries` times and still have not acked it,
@@ -369,7 +368,7 @@ anything but are included as approximations at any point in time.
 
 ## Releases ##
 
-### 0.1.0 (2022-08-30) ###
+### 0.0.0 (2022-08-30) ###
 
 * [NEW] Ability to specify a visibility window when getting a message
 * [NEW] Added .clean() method to remove old (processed) messages
