@@ -21,7 +21,7 @@ const url = 'mongodb://localhost:27017/'
 const dbName = 'mongooQ'
 
 const db = await mongoose.connect(url + dbName)
-const queue = new mongooQ(db, 'queue', { visibility: 60 })
+const queue = new mongooQ(db, 'queue', { visibility: 60 }) // 1 minute visibility
 ```
 
 Alternatively, if you've already connected elsewhere in your app:
@@ -164,7 +164,7 @@ This is now the default for every message added to the queue.
 
 Default: none
 
-Messages that have been retried over `maxRetries` will be pushed to this queue so you can
+Messages that have been retried over `maxTries` will be pushed to this queue so you can
 automatically see problem messages.
 
 Pass in a queue (that you created) onto which these messages will be pushed:
@@ -174,18 +174,18 @@ const deadQueue = new mongooQ(mongoose, 'deadQueue')
 const queue = new mongooQ(mongoose, 'queue', { deadQueue })
 ```
 
-If you pop a message off the `queue` over `maxRetries` times and still have not acked it,
+If you pop a message off the `queue` over `maxTries` times and still have not acked it,
 it will be pushed onto the `deadQueue` for you. This happens when you `.get()` (not when
 you miss acking a message in it's visibility window). By doing it when you call `.get()`,
 the unprocessed message will be received, pushed to the `deadQueue`, acked off the normal
 queue and `.get()` will check for new messages prior to returning you one (or none).
 
-### maxRetries - Maximum Retries per Message ###
+### maxTries - Maximum Retries per Message ###
 
 Default: 5
 
 This option only comes into effect if you pass in a `deadQueue` as shown above. What this
-means is that if an item is popped off the queue `maxRetries` times (e.g. 5) and not acked,
+means is that if an item is popped off the queue `maxTries` times (e.g. 5) and not acked,
 it will be moved to this `deadQueue` the next time it is tried to pop off. You can poll your
 `deadQueue` for dead messages much like you can poll your regular queues.
 
@@ -205,7 +205,7 @@ msg = {
 }
 ```
 
-If it is not acked within the `maxRetries` times, then when you receive this same message
+If it is not acked within the `maxTries` times, then when you receive this same message
 from the `deadQueue`, it may look like this:
 
 ```js

@@ -15,23 +15,23 @@ class Queue {
      * @param {number} name - Message collection name
      * @param {object} [opts] - Options for queue setup
      */
-    constructor(db, name, opts = {}) {
+    constructor(mongoose, name, opts = {}) {
         // Confirm we have a database client and a name
-        if (!db) throw new Error('mongooseQ: provide a mongoose client')
+        if (!mongoose) throw new Error('mongooseQ: provide a mongoose client')
         if (!name) throw new Error('mongooseQ: provide a queue name')
         // Get instantiated model
-        let Model = db.models[name]
+        let Model = mongoose.models[name]
         // If the model hasn't been instatiated, do it
         if (!Model) {
             // Model
-            const schemaModel = new db.Schema({
+            const schemaModel = new mongoose.Schema({
                 ack: String,
                 visible: { // Unix timestamp representing current visibility
                     type: Number,
                     required: true
                 },
                 payload: { // Data being queue'd
-                    type: db.Schema.Types.Mixed, // This type can be anything
+                    type: mongoose.Schema.Types.Mixed, // This type can be anything
                     required: true
                 },
                 done: { // Unix timestamp representing completion time
@@ -50,7 +50,7 @@ class Queue {
             // Index at schema level
             schemaModel.index({ done: 1, visible: 1 })
             schemaModel.index({ ack: 1 }, { unique: true, sparse: true })
-            Model = db.model(name, schemaModel)
+            Model = mongoose.model(name, schemaModel)
         }
         this.Model = Model
         // Handle the options passed through
@@ -59,7 +59,7 @@ class Queue {
         // Handle deadQueue items
         if (opts.deadQueue) {
             this.deadQueue = opts.deadQueue
-            this.maxRetries = opts.maxRetries || 5
+            this.maxTries = opts.maxTries || 5
         }
     }
     /**
@@ -132,7 +132,7 @@ class Queue {
         // if we have a deadQueue, then check the tries, else don't
         if (this.deadQueue) {
             // check the tries
-            if (msg.tries > this.maxRetries) {
+            if (msg.tries > this.maxTries) {
                 // So:
                 // 1) add this message to the deadQueue
                 // 2) ack this message from the regular queue
