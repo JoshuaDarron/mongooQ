@@ -24,7 +24,7 @@ const db = await mongoose.connect(url + dbName)
 const queue = new mongooQ(db, 'queue', { visibility: 86400 })
 ```
 
-Alternatively, if you've already connected elsewhere in your app
+Alternatively, if you've already connected elsewhere in your app:
 
 ```js
 const mongoose = require('mongoose')
