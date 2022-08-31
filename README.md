@@ -367,6 +367,10 @@ anything but are included as approximations at any point in time.
 
 ## Releases ##
 
+### 0.0.1 (2022-08-31) ###
+
+* [FIX] No longer getting schema error when using the same collection name with multiple queue's
+
 ### 0.0.0 (2022-08-30) ###
 
 * [NEW] Ability to specify a visibility window when getting a message
