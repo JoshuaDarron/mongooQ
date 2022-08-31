@@ -79,14 +79,13 @@ const mongooQ = require('mongooq')
 
 // an instance of a queue
 const queue1 = await mongooQ(db, 'a-queue')
-// another queue which uses a different collection than above
-const queue2 = await mongooQ(db, 'b-queue')
+// another queue which uses the same collection as above
+const queue2 = await mongooQ(db, 'a-queue')
 ```
 
-Using `queue1` and `queue2` here won't interfere with each other because they are seperate collections and will be handled accordingly.
+Using `queue1` and `queue2` here won't interfere with each other and will play along nicely, but that's not a good idea code-wise - just use the same object. This example is for illustrative purposes only.
 
-Note: Don't use the same queue name twice with different options, otherwise behaviour is undefined and again
-it's not something you should do.
+Note: Don't use the same queue name twice with different options, otherwise behaviour is undefined and again it's not something you should do.
 
 To pass in options for the queue:
 
