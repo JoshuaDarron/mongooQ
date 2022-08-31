@@ -50,6 +50,9 @@ console.log('msg.id=' + msg.id)
 console.log('msg.ack=' + msg.ack)
 console.log('msg.payload=' + msg.payload) // 'Hello, World!'
 console.log('msg.tries=' + msg.tries)
+console.log('msg.done=' + msg.done)
+console.log('msg.createdAt=' + msg.createdAt)
+console.log('msg.updatedAt=' + msg.updatedAt)
 ```
 
 Ping a message to keep it's visibility open for long-running tasks
