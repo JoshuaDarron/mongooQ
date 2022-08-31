@@ -19,35 +19,40 @@ class Queue {
         // Confirm we have a database client and a name
         if (!db) throw new Error('mongooseQ: provide a mongoose client')
         if (!name) throw new Error('mongooseQ: provide a queue name')
-        // Message Model
-        const schemaModel = new db.Schema({
-            ack: String,
-            visible: { // Unix timestamp representing current visibility
-                type: Number,
-                required: true
-            },
-            payload: {
-                type: db.Schema.Types.Mixed,
-                required: true
-            },
-            done: { // Unix timestamp representing completion time
-                type: Boolean,
-                default: false,
-                required: true
-            },
-            tries: { // Number representing total attempts
-                type: Number,
-                default: 0,
-                required: true
-            }
-        }, {
-            timestamps: true
-        })
-        // Index at schema level
-        schemaModel.index({ done: 1, visible: 1 })
-        schemaModel.index({ ack: 1 }, { unique: true, sparse: true })
-        // Instantiate the message model
-        this.Model = db.model(name, schemaModel)
+        // Get instantiated model
+        let Model = db.models[name]
+        // If the model hasn't been instatiated, do it
+        if (!Model) {
+            // Model
+            const schemaModel = new db.Schema({
+                ack: String,
+                visible: { // Unix timestamp representing current visibility
+                    type: Number,
+                    required: true
+                },
+                payload: { // Data being queue'd
+                    type: db.Schema.Types.Mixed, // This type can be anything
+                    required: true
+                },
+                done: { // Unix timestamp representing completion time
+                    type: Boolean,
+                    default: false,
+                    required: true
+                },
+                tries: { // Number representing total attempts
+                    type: Number,
+                    default: 0,
+                    required: true
+                }
+            }, {
+                timestamps: true
+            })
+            // Index at schema level
+            schemaModel.index({ done: 1, visible: 1 })
+            schemaModel.index({ ack: 1 }, { unique: true, sparse: true })
+            Model = db.model(name, schemaModel)
+        }
+        this.Model = Model
         // Handle the options passed through
         this.visibility = opts.visibility || 30
         this.delay = opts.delay || 0
@@ -110,7 +115,7 @@ class Queue {
                 visible: now() + visibility,
             }
         }
-        // Fetch and Update a message
+        // Fetch and Update a messageconvert to an external representation
         const res = await this.Model.findOneAndUpdate(where, update, { sort, returnOriginal: false })
         if (!res) return null
         // convert to an external representation
