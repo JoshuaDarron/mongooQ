@@ -21,7 +21,7 @@ const url = 'mongodb://localhost:27017/'
 const dbName = 'mongooQ'
 
 const db = await mongoose.connect(url + dbName)
-const queue = new mongooQ(db, 'default', { visibility: 86400 })
+const queue = new mongooQ(db, 'queue', { visibility: 86400 })
 ```
 
 Add a message to a queue:
