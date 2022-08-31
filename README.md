@@ -24,6 +24,16 @@ const db = await mongoose.connect(url + dbName)
 const queue = new mongooQ(db, 'queue', { visibility: 86400 })
 ```
 
+Alternatively, if you've already connected elsewhere in your app
+
+```js
+const mongoose = require('mongoose')
+const mongooQ = require('mongooq')
+
+// Pass in mongoose directly
+const queue = new mongooQ(mongoose, 'queue', { visibility: 86400 })
+```
+
 Add a message to a queue:
 
 ```js
