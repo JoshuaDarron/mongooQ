@@ -85,12 +85,13 @@ and a set of opts. The MongoDB collection used is the same name as the name
 passed in:
 
 ```js
+const mongoose = require('mongoose')
 const mongooQ = require('mongooq')
 
-// an instance of a queue
-const queue1 = await mongooQ(db, 'a-queue')
-// another queue which uses the same collection as above
-const queue2 = await mongooQ(db, 'a-queue')
+// An instance of a queue
+const queue1 = await mongooQ(mongoose, 'a-queue')
+// Another queue which uses the same collection as above
+const queue2 = await mongooQ(mongoose, 'a-queue')
 ```
 
 Using `queue1` and `queue2` here won't interfere with each other and will play along nicely, but that's not a good idea code-wise - just use the same object. This example is for illustrative purposes only.
