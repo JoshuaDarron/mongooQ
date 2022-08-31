@@ -89,9 +89,9 @@ const mongoose = require('mongoose')
 const mongooQ = require('mongooq')
 
 // An instance of a queue
-const queue1 = await mongooQ(mongoose, 'a-queue')
+const queue1 = new mongooQ(mongoose, 'a-queue')
 // Another queue which uses the same collection as above
-const queue2 = await mongooQ(mongoose, 'a-queue')
+const queue2 = new mongooQ(mongoose, 'a-queue')
 ```
 
 Using `queue1` and `queue2` here won't interfere with each other and will play along nicely, but that's not a good idea code-wise - just use the same object. This example is for illustrative purposes only.
@@ -101,7 +101,7 @@ Note: Don't use the same queue name twice with different options, otherwise beha
 To pass in options for the queue:
 
 ```js
-const resizeQueue = await mongooQ(mongoose, 'resize-queue', { visibility : 30, delay : 15 })
+const resizeQueue = new mongooQ(mongoose, 'resize-queue', { visibility : 30, delay : 15 })
 ```
 
 This example shows a queue with a message visibility of 30s and a delay to each message of 15s.
@@ -116,8 +116,8 @@ Each queue you create will be it's own collection.
 e.g.
 
 ```js
-const resizeImageQueue = await mongooQ(mongoose, 'resize-image-queue')
-const notifyOwnerQueue = await mongooQ(mongoose, 'notify-owner-queue')
+const resizeImageQueue = new mongooQ(mongoose, 'resize-image-queue')
+const notifyOwnerQueue = new mongooQ(mongoose, 'notify-owner-queue')
 ```
 
 This will create two collections in MongoDB called `resize-image-queue` and `notify-owner-queue`.
@@ -134,7 +134,7 @@ You may set this visibility window on a per queue basis. For example, to set the
 visibility to 15 seconds:
 
 ```js
-const queue = await mongooQ(mongoose, 'queue', { visibility : 15 })
+const queue = new mongooQ(mongoose, 'queue', { visibility : 15 })
 ```
 
 All messages in this queue now have a visibility window of 15s, instead of the
@@ -152,7 +152,7 @@ retrieval 10s after being added.
 To delay all messages by 10 seconds, try this:
 
 ```js
-const queue = await mongooQ(mongoose, 'queue', { delay : 10 })
+const queue = new mongooQ(mongoose, 'queue', { delay : 10 })
 ```
 
 This is now the default for every message added to the queue.
@@ -167,8 +167,8 @@ automatically see problem messages.
 Pass in a queue (that you created) onto which these messages will be pushed:
 
 ```js
-const deadQueue = await mongooQ(mongoose, 'deadQueue')
-const queue = await mongooQ(mongoose, 'queue', { deadQueue })
+const deadQueue = new mongooQ(mongoose, 'deadQueue')
+const queue = new mongooQ(mongoose, 'queue', { deadQueue })
 ```
 
 If you pop a message off the `queue` over `maxRetries` times and still have not acked it,
